@@ -7,18 +7,24 @@
 #include <iterator>
 #include <string.h>
 #include <stdio.h>
+#include "TableVariables.h"
 
 using namespace std;
 
 extern string prologue = "";
 extern string body = "";
-extern map <string, int> table;
-/************* clase abstracta *************************/
+extern TablaVariables table; //Nombre_Var <etiqueta, valor>
+extern int localCont = 0; //Para las etiquetas de las variables locales
+extern int parmCont = 0; //Para el numero de parametros que entra en la funcion
+extern list<string> globalV;//Lista de variables globales
 
+
+
+/************* clase abstracta *************************/
 class Node {
  public:
-  virtual int eval(void) = 0;
-} ; // fin de la clase abstracta Node
+  virtual string assemblyString() = 0;
+} ;
 
 /************ clases derivadas *************************/
 
