@@ -14,9 +14,12 @@ using namespace std;
 extern string prologue = "";
 extern string body = "";
 extern TablaVariables table; //Nombre_Var <etiqueta, valor>
+extern map<string, int> globalV;//Lista de variables globales
 extern int localCont = 0; //Para las etiquetas de las variables locales
 extern int parmCont = 0; //Para el numero de parametros que entra en la funcion
-extern list<string> globalV;//Lista de variables globales
+extern int tagCont = 0; //Contador de etiquetas
+
+
 
 
 
@@ -28,6 +31,7 @@ class Node {
 
 /************ clases derivadas *************************/
 
+//----------------CLASE NUM--------------------
 class NumNode : public Node {
  private:
   int num;
@@ -39,10 +43,32 @@ class NumNode : public Node {
   }
 } ;
 
+//----------------CLASE DECLARACION--------------------
+class DeclarationNode : public Node {
+  private:
+    char type;
+    string id;
+    int num;
+  public:
+    DeclarationNode(char type, string id, int num) : type(type), id(id), num(num){}
 
+    void eval(void){
+      if(table.checkVar(id) == false){
+        localCont = localCont + 4;
+        table.insertVar(id, localCont, num);
+      }
+      else{
+        cerr<<"ERROR : Has declarado dos veces la misma variable."<<endl;
+      }
+    }
 
+    void generate_assembly(){
+      
+    }
 
+};
 
+//----------------CLASE OPERADORES ARITMETICOS--------------------
 class ArithmeticNode : public Node {
 private:
   char type;
@@ -86,7 +112,7 @@ public:
   }
 } ;
 
-
+//----------------CLASE ASIGNACION--------------------
 class AssignmentNode : public Node {
  private:
   string id;
@@ -131,6 +157,7 @@ class AssignmentNode : public Node {
 
 } ;
 
+//----------------CLASE OPERADORES LOGICOS--------------------
 class LogicalNode : public Node {
 private:
   string op;
@@ -156,7 +183,7 @@ public:
   }
 } ;
 
-
+//----------------CLASE RELACIONALES--------------------
 class RelationalNode : public Node {
 private:
   string op;
@@ -189,4 +216,10 @@ public:
     body.append(buf);
   }
 } ;
+
+string generate_tag(){
+  string new_tag = "T" + to_string(tagCont++);
+  return new_tag;
+}
+
 #endif
